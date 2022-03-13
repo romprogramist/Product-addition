@@ -1,349 +1,186 @@
 
 
+const objectsFromDb = [
+    {
+        img: 'https://s0.rbk.ru/v6_top_pics/media/img/7/62/756371626959627.jpg',
+        alt: 'Volkswagen',
+        title: 'Volkswagen',
+        header: 'Volkswagen',
+        subtitle: 'Группа Volkswagen стала крупнейшим в мире производителем всех типов автомобилей в 2018 г',
+        price: 187000,
+        id: Date.now()+1
+    },
+    {
+        img: 'https://s0.rbk.ru/v6_top_pics/media/img/7/11/756420591959117.jpg',
+        alt: 'Bmw',
+        title: 'Bmw',
+        header: 'Bmw',
+        subtitle: 'История BMW начиналась в баварском Мюнхене, где в 1913',
+        price: 254000,
+        id: Date.now()+2
+    },
+    {
+        img: 'https://img.zr.ru/_ah/img/V3y1K75omY_e6jp2ewrOAA=s800',
+        alt: 'ŠKODA',
+        title: 'ŠKODA',
+        header: 'ŠKODA',
+        subtitle: 'Но ŠKODA входит в концерн Volkswagen. Концерн является одним из ведущих игроков на мировом рынке и главным европейским производителем.',
+        price: 97000,
+        id: Date.now()+3
+    },
+    {
+        img: 'https://img.gazeta.ru/files3/779/14255779/performance.jpg.ximg.l_full_m-pic_32ratio_900x600-900x600-63838.jpg',
+        alt: 'Nissan',
+        title: 'Nissan',
+        header: 'Nissan',
+        subtitle: 'Ниссан принадлежит ряд автомобилестроительных предприятий в Японии, Великобритании, Соединённых Штатах Америки, Мексике, ЮАР и т. д.',
+        price: 138000,
+        id: Date.now()+4
+    },
+]
+
+const addKeyObjectsFromDb = objectsFromDb.reduce((acc, curr) => {
+    acc[curr.id] = curr;
+    return acc;
+}, {})
+
+
+const cardsContainer = document.querySelector('.cards');
+
+const sortSelect = document.getElementById('price-category');
+
+const inputsData = document.querySelectorAll('#new-item input, textarea');
 
 
 
 
+let btnSubmitForm = document.querySelector('#new-item button');
 
-// listSorting.addEventListener('change', () => {
-//     if (listSorting.value === 'Максимальная цена') {
-//         arrObg.sort((a, b) =>  b.price - a.price);
-//     }
-//     if (listSorting.value === 'Минимальная цена') {
-//         arrObg.sort((a, b) =>   a.price - b.price);        
-//     }
-//     if (listSorting.value === 'По умолчанию') {
-//         cards.innerHTML = ''
-//         renderDom(arrDefault); 
-//         return
-//     }
-//     cards.innerHTML = ''
-//     renderDom(arrObg);
-// })
 
-document.querySelectorAll('.form input').forEach(el => {
-    el.addEventListener('input', () => {
-        if(el.id === 'nameProd') {
-            el.value = el.value.slice(0, 17);                
-        }
-        if(el.id === 'descriptionProd') {       
-            el.value = el.value.slice(0, 123);  
-        }
-        if(el.id === 'numberProd') {
-            if (el.value.match(/[0-9]/)) {
-                if(el.value.length === 2) {
-                    el.value += ' '
-                }
-                el.value = el.value.slice(0, 8);  
+function formValidation() {
+    inputsData.forEach(input => {
+        input.addEventListener('input', () => {
+            if(input.value.length) {
+                input.previousElementSibling.classList.remove('red-label');
+                input.classList.remove('general-class-inputs-red');
+                input.nextElementSibling.textContent = ''                
+
             } else {
-                el.value = el.value.slice(0, 0); 
+                input.previousElementSibling.classList.add('red-label');
+                input.classList.add('general-class-inputs-red');
+                input.nextElementSibling.textContent = 'Поле является обязательным'
+            }              
+            
+            let fieldValidationResult = [... inputsData].every((a) => a.value);            
+            if(fieldValidationResult) {
+                btnSubmitForm.classList.add('buttonStyleActive');      
+
             }
-        }
+        })
     })
-})
+}
+
+formValidation()
+
+const form = document.querySelector('#new-item');
+
+cardsContainer.addEventListener('click', (e) => {
+    const target = e.target;
+    if(target.classList.contains('icon-trach')) {
+        console.log(e.target);
+        let domElId = Number(target.parentElement.id);        
+        Object.keys(addKeyObjectsFromDb).forEach(id => {            
+            if(id == domElId) {
+                delete addKeyObjectsFromDb[id];
+            }
+        });
+        renderCards(addKeyObjectsFromDb);
+    }
+});
 
 
+sortSelect.addEventListener('change', () => {
+    cardsContainer.innerHTML = '';
+    let res;
+    switch(sortSelect.value) {
+        case 'Максимальная цена':  
+            res = Object.values(addKeyObjectsFromDb).sort((a, b) => parseInt(b.price) - parseInt(a.price));                  
+            break;
+        case 'Минимальная цена':
+            res = Object.values(addKeyObjectsFromDb).sort((a, b) =>  parseInt(a.price) - parseInt(b.price));
+            break;
+        case 'По умолчанию':
+            res = Object.values(addKeyObjectsFromDb).sort((a, b) =>  a.id - b.id);
+            break;
+    }
+    renderCards(res);
+});
 
 
+form.addEventListener('submit', (e) => {
+    e.preventDefault();
 
 
-// const arrObg = [
-//     {
-//         img: 'images/bg/img2.jpeg',
-//         alt: 'Стиральная машина',
-//         title: 'Стиральная машина',
-//         header: 'Стиральная машина',
-//         subtitle: 'Установка для стирки текстильных изделий (одежды, нижнего и постельного белья, сумок и других вещей), а также иногда обуви.',
-//         price: `${80000} руб`
-//     },
-//     {
-//         img: 'images/bg/img4.jpeg',
-//         alt: 'Обогреватель',
-//         title: 'Обогреватель',
-//         header: 'Обогреватель',
-//         subtitle: 'Отопительный прибор, нагревающий поток воздуха, продуваемого через нагревательный элемент, при помощи встроенного вентилятора.',
-//         price: `${15000} руб`
-//     },
-//     {
-//         img: 'images/bg/img3.jpeg',
-//         alt: 'Пылесос',
-//         title: 'Пылесос',
-//         header: 'Пылесос',
-//         subtitle: 'Машина для уборки пыли и загрязнений с поверхностей за счёт всасывания потоком воздуха.',
-//         price: `${30000} руб`
-//     },
-//     {
-//         img: 'images/bg/img1.jpeg',
-//         alt: 'холодильник',
-//         title: 'холодильник',
-//         header: 'Холодильник',
-//         subtitle: 'Устройство, поддерживающее низкую температуру в теплоизолированной камере.',
-//         price: `${120000} руб`
-//     },
-// ]
-// const arrDefault = [...arrObg];
-
-// const cards = document.querySelector('.cards')
-// const fragment = document.createDocumentFragment();
-// function renderDom(arr) {
-//     arr.forEach((el) => {
-//         const div = document.createElement('div');
-//         const img = document.createElement('img');
-//         img.setAttribute('src', el.img);
-//         img.setAttribute('alt', el.alt);
-//         img.setAttribute('title', el.title);
-//         const childSection = document.createElement('div');
-//         const HThree = document.createElement('h3');
-//         HThree.textContent = el.header;
-//         const subtitle = document.createElement('p');
-//         subtitle.textContent = el.subtitle;
-//         const price = document.createElement('p');
-//         price.setAttribute('class', 'price');
-//         price.textContent = el.price;
+    // checkInputs(inputsData, 'general-class-inputs-red');
+    const res = [ ...inputsData ].reduce((acc, curr) => {
+        acc[curr.dataset.fieldName] = curr.value;        
+        return acc;
+    } , { id: Date.now()});  
+    addKeyObjectsFromDb[res.id] = res;
     
-    
-    
-//         childSection.appendChild(HThree);
-//         childSection.appendChild(subtitle);
-//         childSection.appendChild(price);
-    
-    
-//         div.appendChild(img);
-//         div.appendChild(childSection);
-    
-    
-//         fragment.appendChild(div);
-    
-//         cards.appendChild(fragment);
-//     })
-// }
-// renderDom(arrObg);
-// const listSorting = document.getElementById('price-category');
+    renderCards(Object.entries(addKeyObjectsFromDb).sort((a, b) => b[0] - a[0]).map(e => e[1]));    
 
-// listSorting.addEventListener('change', () => {
-//     if (listSorting.value === 'Максимальная цена') {
-//         arrObg.sort((a, b) =>  b.price - a.price);
-//     }
-//     if (listSorting.value === 'Минимальная цена') {
-//         arrObg.sort((a, b) =>   a.price - b.price);        
-//     }
-//     if (listSorting.value === 'По умолчанию') {
-//         cards.innerHTML = ''
-//         renderDom(arrDefault); 
-//         return
-//     }
-//     cards.innerHTML = ''
-//     renderDom(arrObg);
-// })
+    document.querySelector('#new-item').reset();
 
-// document.querySelectorAll('.form input').forEach(el => {
-//     el.addEventListener('input', () => {
-//         if(el.id === 'nameProd') {
-//             el.value = el.value.slice(0, 17);                
-//         }
-//         if(el.id === 'descriptionProd') {       
-//             el.value = el.value.slice(0, 123);  
-//         }
-//         if(el.id === 'numberProd') {
-//             if (el.value.match(/[0-9]/)) {
-//                 if(el.value.length === 2) {
-//                     el.value += ' '
-//                 }
-//                 el.value = el.value.slice(0, 8);  
-//             } else {
-//                 el.value = el.value.slice(0, 0); 
-//             }
-//         }
-//     })
-// })
+    btnSubmitForm.classList.remove('buttonStyleActive');
+    inputsData.forEach(input => input.previousElementSibling.classList.add('red-label'));
+    
+});
 
-// const inputsData = document.querySelectorAll('.form input');
-
-// inputsData.forEach(el => {
-//     el.addEventListener('input', () => {
-//         if(el.id === 'nameProd') {
-//             el.value = el.value.slice(0, 17);                
-//         }
-//         if(el.id === 'descriptionProd') {       
-//             el.value = el.value.slice(0, 123);  
-//         }
-//         if(el.id === 'numberProd') {
-//             if (el.value.match(/[0-9]/)) {
-//                 if(el.value.length === 2) {
-//                     el.value += ' '
-//                 }
-//                 el.value = el.value.slice(0, 8);  
-//             } else {
-//                 el.value = el.value.slice(0, 0); 
-//             }
-//         }
-//     })
-// })
-
-// document.getElementById('nameProd').addEventListener('input', () => {
-//     if ( document.getElementById('nameProd').value.length === 10 ) {
-//         console.log('object');
-//     }
-// })
+renderCards(addKeyObjectsFromDb);
 
 
-// document.querySelector('.form').addEventListener('submit', (e) => {
-//     e.preventDefault();
+function renderCards(cardObjects) {
+    cardsContainer.innerHTML = '';
     
-//     [...inputsData].reduce((acc, curr, i) => {
-//         console.log(i);
-//         acc[curr.dataset.fieldName] = curr.value
-//         // console.log(acc);
+    Object.values(cardObjects).forEach(({img, alt, id, title, subtitle, header, price}) => {
         
-//     } , {})
-    
-    // cards.innerHTML = ''
-    // arrObg.push(newObj);
-    // renderDom(arrObg);
-// });
+        const iconTrach = document.createElement('span');
+        iconTrach.classList.add('icon-trach');
 
+        const wrapperDiv = document.createElement('div');
+        wrapperDiv.classList.add('item')
+        wrapperDiv.setAttribute('id', id);
 
-
-// !document.get_by.cost.value.match(/[0-9]/)
-
-// document.getElementById('nameProd').addEventListener('input', () => {
-//     if ( document.getElementById('nameProd').value.length === 10 ) {
-//         console.log('object');
-//     }
-// })
-
-// document.querySelector('.form').addEventListener('submit', (e) => {
-//     e.preventDefault();
-    
-// });
-
-
-
-
-
-
-
-
-
-
-
-// const arrDefault = [...arrObg];
-
-// const cards = document.querySelector('.cards')
-// const fragment = document.createDocumentFragment();
-// function renderDom(arr) {
-//     arr.forEach((el) => {
-//         const div = document.createElement('div');
-//         const img = document.createElement('img');
-//         img.setAttribute('src', el.img);
-//         img.setAttribute('alt', el.alt);
-//         img.setAttribute('title', el.title);
-//         const childSection = document.createElement('div');
-//         const HThree = document.createElement('h3');
-//         HThree.textContent = el.header;
-//         const subtitle = document.createElement('p');
-//         subtitle.textContent = el.subtitle;
-//         const price = document.createElement('p');
-//         price.setAttribute('class', 'price');
-//         price.textContent = el.price;
-    
-    
-    
-//         childSection.appendChild(HThree);
-//         childSection.appendChild(subtitle);
-//         childSection.appendChild(price);
-    
-    
-//         div.appendChild(img);
-//         div.appendChild(childSection);
-    
-    
-//         fragment.appendChild(div);
-    
-//         cards.appendChild(fragment);
-//     })
-// }
-// renderDom(arrObg);
-// const listSorting = document.getElementById('price-category');
-
-// listSorting.addEventListener('change', () => {
-//     if (listSorting.value === 'Максимальная цена') {
-//         arrObg.sort((a, b) =>  b.price - a.price);
-//     }
-//     if (listSorting.value === 'Минимальная цена') {
-//         arrObg.sort((a, b) =>   a.price - b.price);        
-//     }
-//     if (listSorting.value === 'По умолчанию') {
-//         cards.innerHTML = ''
-//         renderDom(arrDefault); 
-//         return
-//     }
-//     cards.innerHTML = ''
-//     renderDom(arrObg);
-// })
-
-// document.querySelectorAll('.form input').forEach(el => {
-//     el.addEventListener('input', () => {
-//         if(el.id === 'nameProd') {
-//             el.value = el.value.slice(0, 17);                
-//         }
-//         if(el.id === 'descriptionProd') {       
-//             el.value = el.value.slice(0, 123);  
-//         }
-//         if(el.id === 'numberProd') {
-//             if (el.value.match(/[0-9]/)) {
-//                 if(el.value.length === 2) {
-//                     el.value += ' '
-//                 }
-//                 el.value = el.value.slice(0, 8);  
-//             } else {
-//                 el.value = el.value.slice(0, 0); 
-//             }
-//         }
-//     })
-// })
-
-// const inputsData = document.querySelectorAll('.form input');
-
-// inputsData.forEach(el => {
-//     el.addEventListener('input', () => {
-//         if(el.id === 'nameProd') {
-//             el.value = el.value.slice(0, 17);                
-//         }
-//         if(el.id === 'descriptionProd') {       
-//             el.value = el.value.slice(0, 123);  
-//         }
-//         if(el.id === 'numberProd') {
-//             if (el.value.match(/[0-9]/)) {
-//                 if(el.value.length === 2) {
-//                     el.value += ' '
-//                 }
-//                 el.value = el.value.slice(0, 8);  
-//             } else {
-//                 el.value = el.value.slice(0, 0); 
-//             }
-//         }
-//     })
-// })
-
-// document.getElementById('nameProd').addEventListener('input', () => {
-//     if ( document.getElementById('nameProd').value.length === 10 ) {
-//         console.log('object');
-//     }
-// })
-
-
-// document.querySelector('.form').addEventListener('submit', (e) => {
-//     e.preventDefault();
-    
-//     [...inputsData].reduce((acc, curr, i) => {
-//         console.log(i);
-//         acc[curr.dataset.fieldName] = curr.value
-//         // console.log(acc);
+        const imgEl = document.createElement('img');
+        imgEl.setAttribute('src', img);
+        imgEl.setAttribute('alt', alt);
+        imgEl.setAttribute('title', title);
+        const childSection = document.createElement('div');
+        const h3 = document.createElement('h3');
+        h3.textContent = header;
+        const subtitleElement = document.createElement('p');
+        subtitleElement.textContent = subtitle;
+        const priceEl = document.createElement('p');
+        priceEl.classList.add('price');
         
-//     } , {})
+
+
+        let str = String(price);
+        let newStr = str.split("").reverse().map(( c, i ) =>  i % 3 === 0 ? c + ' ': c ).reverse().join("").trim();
+        priceEl.textContent = newStr += ' руб';
     
-    // cards.innerHTML = ''
-    // arrObg.push(newObj);
-    // renderDom(arrObg);
-// });
+        
+        childSection.appendChild(h3);
+        childSection.appendChild(subtitleElement);
+        childSection.appendChild(priceEl);
+    
+        
+        wrapperDiv.appendChild(iconTrach);
+        wrapperDiv.appendChild(imgEl);
+        wrapperDiv.appendChild(childSection);
+        
+        cardsContainer.appendChild(wrapperDiv);
+        
+    })
+}

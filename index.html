@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="css/style.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600&display=swap" rel="stylesheet"> 
     <title>Тестовое Задание</title>
 </head>
 <body>
@@ -27,25 +27,27 @@
                     </form>
                 </div>
                 <div>
-                    <form class="form">
-                        <label class="label">
+                    <form id="new-item">
+                        <label class="red-label">
                             Наименование товара
                         </label>
                         <input data-field-name="header" id="nameProd" placeholder="Введите наименование товара" type="text"  maxlength="25" autocomplete="off" required>
-                        <label class="label">
+                        <span></span> 
+                        <label class="red-label">
                             Описание товара
                         </label>
                         <textarea maxlength="125" data-field-name="subtitle" placeholder="Введите ссылку"  type="text" autocomplete="off" id="descriptionProd" placeholder="Введите описание товара" required></textarea>
-                        <label class="label">
+                        <span></span> 
+                        <label class="red-label">
                             Ссылка на изображение товара
                         </label>
                         <input data-field-name="img" placeholder="Введите ссылку"  type="text" autocomplete="off" required>
-
-                        <label class="label">
+                        <span></span> 
+                        <label class="red-label">
                             Цена товара
                         </label>
-                        <input data-field-name="price" id="numberProd" placeholder="Введите цену" type="number" autocomplete="off"  max="2000000" required>
-                                        
+                        <input data-field-name="price" id="numberProd" placeholder="Введите цену" type="number" autocomplete="off"  max="2000000" required>                                                                
+                        <span></span>                 
                         <button>
                             Добавить товар
                         </button>
@@ -55,6 +57,6 @@
             </div>
         </section>
     </main>
-    <script src="js/index1.js"></script>
+    <script src="js/index.js"></script>
 </body>
 </html>
