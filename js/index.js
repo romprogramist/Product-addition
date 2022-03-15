@@ -110,9 +110,9 @@ sortSelect.addEventListener('change', () => {
             res = Object.values(addKeyObjectsFromDb).sort((a, b) =>  parseInt(a.price) - parseInt(b.price));
             break;
         case 'По умолчанию':
-            res = Object.values(addKeyObjectsFromDb).sort((a, b) =>  a.id - b.id);
+            res = Object.entries(addKeyObjectsFromDb).sort((a, b) => b[0] - a[0]).map(e => e[1])
             break;
-    }
+    } 
     renderCards(res);
 });
 
@@ -121,7 +121,7 @@ form.addEventListener('submit', (e) => {
     e.preventDefault();
 
 
-    // checkInputs(inputsData, 'general-class-inputs-red');
+
     const res = [ ...inputsData ].reduce((acc, curr) => {
         acc[curr.dataset.fieldName] = curr.value;        
         return acc;
