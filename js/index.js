@@ -59,24 +59,26 @@ let btnSubmitForm = document.querySelector('#new-item button');
 
 function formValidation() {
     inputsData.forEach(input => {
-        input.addEventListener('input', () => {
-            if(input.value.length) {
-                input.previousElementSibling.classList.remove('red-label');
-                input.classList.remove('general-class-inputs-red');
-                input.nextElementSibling.textContent = ''                
-
-            } else {
-                input.previousElementSibling.classList.add('red-label');
-                input.classList.add('general-class-inputs-red');
-                input.nextElementSibling.textContent = 'Поле является обязательным'
-            }              
-            
-            let fieldValidationResult = [... inputsData].every((a) => a.value);            
-            if(fieldValidationResult) {
-                btnSubmitForm.classList.add('buttonStyleActive');      
-
-            }
-        })
+        if(input.tagName == 'INPUT') {
+            input.addEventListener('input', () => {
+                if(input.value.length) {
+                    input.previousElementSibling.classList.remove('red-label');
+                    input.classList.remove('general-class-inputs-red');
+                    input.nextElementSibling.textContent = ''                
+    
+                } else {
+                    input.previousElementSibling.classList.add('red-label');
+                    input.classList.add('general-class-inputs-red');
+                    input.nextElementSibling.textContent = 'Поле является обязательным'
+                }              
+                
+                let fieldValidationResult = [... document.querySelectorAll('#new-item input')].every((a) => a.value);            
+                if(fieldValidationResult) {
+                    btnSubmitForm.classList.add('buttonStyleActive');      
+    
+                }
+            })    
+        }
     })
 }
 
@@ -123,7 +125,7 @@ form.addEventListener('submit', (e) => {
 
 
     const res = [ ...inputsData ].reduce((acc, curr) => {
-        acc[curr.dataset.fieldName] = curr.value;        
+        acc[curr.dataset.fieldName] = curr.value;      
         return acc;
     } , { id: Date.now()});  
     addKeyObjectsFromDb[res.id] = res;
@@ -153,9 +155,20 @@ function renderCards(cardObjects) {
         wrapperDiv.setAttribute('id', id);
 
         const imgEl = document.createElement('img');
+
+        
+          
+        
+
         imgEl.setAttribute('src', img);
         imgEl.setAttribute('alt', alt);
         imgEl.setAttribute('title', title);
+
+
+        imgEl.onerror = function() {
+            imgEl.setAttribute('src', 'https://mediapure.ru/wp-content/uploads/2017/12/error-1021x580.jpg');            
+        };
+
         const childSection = document.createElement('div');
         const h3 = document.createElement('h3');
         h3.textContent = header;
